@@ -1,37 +1,19 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
+from streamlit_gsheets import GSheetsConnection
 
-# Page setup
-st.set_page_config(page_title="Portfolio Governance", layout="wide")
-st.title("📊 Portfolio Governance Dashboard")
+# 1. Page Configuration
+st.set_page_config(page_title="Executive Governance Dashboard", layout="wide")
 
-# 1. Dataset
-data = {
-    "Project_Name": [
-        "Cloud Migration",
-        "Payment Gateway V2",
-        "AI Fraud Engine",
-        "Core Banking Modernization",
-    ],
-    "Project_Type": [
-        "Infrastructure",
-        "Product",
-        "Automation / AI",
-        "Core Tech",
-    ],
-    "Allocated_Budget": [150000, 85000, 120000, 300000],
-    "Actual_Spend": [45000, 80000, 60000, 210000],
-    "Start_Date": ["2026-01-15", "2026-03-01", "2026-04-10", "2026-02-01"],
-    "Estimated_End_Date": [
-        "2026-11-30",
-        "2026-06-15",
-        "2026-10-01",
-        "2026-12-31",
-    ],
-    "Progress_Pct": [35, 90, 50, 70],
-    "Risk_Status": ["Low", "High", "Medium", "Medium"],
-}
-df = pd.DataFrame(data)
+# 2. Establish Google Sheets Connection & Fetch Data
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1-oK2aczwg_bOiAPXY02IG3mATUspXYumwkVyN_G3Xvo/edit?gid=1501653939#gid=1501653939"
+
+conn = st.connection("gsheets", type=GSheetsConnection)
+# ttl=60 caches data for 60 seconds so it doesn't re-fetch on every single click
+df = conn.read(spreadsheet=SHEET_URL, ttl=60)
+
+# Drop any blank rows that might exist at the bottom of the sheet
+df = df.dropna(subset=["Project_Name"])
 
 # 2. Sidebar
 risk_filter = st.sidebar.selectbox(
