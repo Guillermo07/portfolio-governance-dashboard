@@ -1,3 +1,5 @@
 .ven/
 __pycache__/
 *.gsheet
+
+.streamlit/secrets.toml
