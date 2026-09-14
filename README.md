@@ -17,7 +17,8 @@ This dashboard provides executive visibility into:
 ---
 ## System Architecture
 
-´´´[ Google Sheets ] 
+´´´ 
+[ Google Sheets ] 
        │ (Dynamic Source / 60s TTL Cache)
        ▼
 [ Streamlit Pipeline ] ───► [ Pandas Engine ] ───► [ Executive UI ]
