@@ -15,9 +15,9 @@ This dashboard provides executive visibility into:
 * High-level health and delivery status monitoring (`On Track`, `Delayed`, `Blocked`).
 
 ---
-## System Architecture
+## 🏗️ System Architecture
 
-´´´ text
+```text
 [ Google Sheets ] 
        │ (Dynamic Source / 60s TTL Cache)
        ▼
@@ -29,8 +29,9 @@ This dashboard provides executive visibility into:
                                    └─────────┬─────────┴──────────┘
                                              ▼
                                   [ Resilient Model Router ]
-                                  (3.6-Flash ➔ 2.0-Flash ➔ 1.5-Flash)
-´´´
+                             (3.6-Flash ➔ 2.0-Flash ➔ 1.5-Flash)
+```
+
 ---
 ## 🚀 Key Features
 
