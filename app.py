@@ -56,7 +56,9 @@ st.divider()
 st.subheader("Detailed Project View")
 st.dataframe(filtered_df, use_container_width=True)
 
+# ---------------------------------------------------------
 # 6. AI Executive Variance & Risk Analyst
+# ---------------------------------------------------------
  
 st.divider()
 st.subheader("🤖 AI Executive Variance & Risk Analyst")
@@ -91,3 +93,81 @@ if st.button("Generate Executive Brief", type="primary"):
 
         # 4. Render output
         st.markdown(response.text)
+
+# ---------------------------------------------------------
+# 7. Conversational AI Assistant (Module 2.2)
+# ---------------------------------------------------------
+
+st.divider()
+st.subheader("💬 Query the Portfolio")
+st.caption("Ask questions about tribe allocation, specific project risks, or request draft communications.")
+
+# Initialize chat history in session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display prior chat messages
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# Chat input widget
+if user_prompt := st.chat_input("E.g., Which projects are at risk of running out of budget?"):
+    # 1. Display and record the user prompt
+    st.session_state.messages.append({"role": "user", "content": user_prompt})
+    with st.chat_message("user"):
+        st.markdown(user_prompt)
+
+    # 2. Build ground-truth context from current dataframe
+    portfolio_context = df[["Project_Name", "Tribe", "Status", "Allocated_Budget", "Actual_Spend", "Burn_Rate", "Variance"]].to_string(index=False)
+
+    system_instruction = f"""
+You are an expert Strategic Portfolio Management Assistant.
+You have direct access to the live portfolio data below:
+
+{portfolio_context}
+
+Instructions:
+- Answer user questions accurately using ONLY the provided data.
+- If calculating figures, be precise with numbers and percentages.
+- If asked to draft emails, Slack updates, or meeting agendas, maintain an executive, candid, and professional tone.
+- If the user asks something outside the scope of this portfolio, politely state that you only have access to current portfolio governance data.
+"""
+
+    # 3. Assemble the conversation history payload
+    conversation = [
+        {"role": "user", "parts": [{"text": system_instruction}]}
+    ]
+    for m in st.session_state.messages:
+        api_role = "user" if m["role"] == "user" else "model"
+        conversation.append({"role": api_role, "parts": [{"text": m["content"]}]})
+
+    # 4. Request answer with fallback model candidates
+    with st.chat_message("assistant"):
+        with st.spinner("Analyzing portfolio..."):
+            client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+
+            target_models = [
+                "gemini-3.6-flash",
+                "gemini-2.0-flash",
+                "gemini-1.5-flash",
+            ]
+            reply_text = None
+
+            for model_candidate in target_models:
+                try:
+                    response = client.models.generate_content(
+                        model=model_candidate,
+                        contents=conversation,
+                    )
+                    reply_text = response.text
+                    break
+                except Exception as e:
+                    print(f"Failed with {model_candidate}: {e}")
+                    continue
+
+            if reply_text:
+                st.markdown(reply_text)
+                st.session_state.messages.append({"role": "assistant", "content": reply_text})
+            else:
+                st.error("The portfolio intelligence engine is currently overloaded. Please retry in a few moments.")
