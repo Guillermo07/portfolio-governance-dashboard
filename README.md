@@ -17,10 +17,18 @@ This dashboard provides executive visibility into:
 ---
 ## System Architecture
 
-```text
-[ Google Sheets ] ---> [ st.connection / GSheets ] ---> [ Pandas Processing Engine ] ---> [ Streamlit UI ]
- (Dynamic Source)          (60s TTL Cache)               (Burn Rate & Variance)         (Metrics & Charts)
-```
+[ Google Sheets ] 
+       │ (Dynamic Source / 60s TTL Cache)
+       ▼
+[ Streamlit Pipeline ] ───► [ Pandas Engine ] ───► [ Executive UI ]
+                                   │                   │          │
+                                   ▼                   ▼          ▼
+                        [ Context Assembly ]   [ Brief Button ] [ Chat Input ]
+                                   │                   │          │
+                                   └─────────┬─────────┴──────────┘
+                                             ▼
+                                  [ Resilient Model Router ]
+                                  (3.6-Flash ➔ 2.0-Flash ➔ 1.5-Flash)
 ---
 ## 🚀 Key Features
 
@@ -31,6 +39,8 @@ This dashboard provides executive visibility into:
     - Critical flags and capital at risk (Burn Rate > 100% or Blocked)
     - Immediate strategic mitigation steps (resource rebalancing, stop-work recommendations)
 * Zero-Trust Secret Management: API credentials and service account configs are isolated via .streamlit/secrets.toml locally and managed securely via Streamlit Cloud environment variables.
+* **Interactive Conversational Copilot:** Built-in chat interface (`st.chat_input`, `st.chat_message`, `st.session_state`) allowing stakeholders to query allocation, project health, and capital-at-risk using natural language.
+* **Resilient Multi-Model Failover:** Fault-tolerant LLM pipeline designed to handle API capacity spikes by gracefully falling back across model candidates (`gemini-3.6-flash`, `gemini-2.0-flash`, `gemini-1.5-flash`).
 
 ---
 ## 🛠️ Tech Stack
@@ -63,3 +73,4 @@ Create .streamlit/secrets.toml and add your credentials:
 GEMINI_API_KEY = "your_gemini_api_key"
 5. Launch the application:
 streamlit run app.py
+
