@@ -17,7 +17,7 @@ This dashboard provides executive visibility into:
 ---
 ## System Architecture
 
-[ Google Sheets ] 
+´´´[ Google Sheets ] 
        │ (Dynamic Source / 60s TTL Cache)
        ▼
 [ Streamlit Pipeline ] ───► [ Pandas Engine ] ───► [ Executive UI ]
@@ -29,6 +29,7 @@ This dashboard provides executive visibility into:
                                              ▼
                                   [ Resilient Model Router ]
                                   (3.6-Flash ➔ 2.0-Flash ➔ 1.5-Flash)
+´´´
 ---
 ## 🚀 Key Features
 
