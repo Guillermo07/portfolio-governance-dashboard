@@ -17,7 +17,7 @@ This dashboard provides executive visibility into:
 ---
 ## System Architecture
 
-´´´ 
+´´´ text
 [ Google Sheets ] 
        │ (Dynamic Source / 60s TTL Cache)
        ▼
